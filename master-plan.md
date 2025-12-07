@@ -25,7 +25,7 @@ Project setup:
 5. Add `.env.local` support with at least:
    - `OPENAI_API_KEY=...`
 
-Create a top‑level `README.md` documenting stack, setup, and hackathon requirements.
+Create a top‑level `README.md` documenting stack, setup, and requirements.
 
 ## 2. Product Concept and Tone
 

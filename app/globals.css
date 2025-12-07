@@ -1,0 +1,80 @@
+@import "tailwindcss";
+
+@theme {
+  /* Custom color palette for A Simpler Xmas */
+  --color-cream: #fdf6ec;
+  --color-cream-dark: #f5ebe0;
+  --color-terracotta: #c67d5e;
+  --color-terracotta-dark: #a65d3e;
+  --color-terracotta-light: #e8a88a;
+  --color-forest: #4a6741;
+  --color-forest-dark: #3a5231;
+  --color-forest-light: #6b8b62;
+  --color-sage: #9caf88;
+  --color-warm-gray: #6b5b4f;
+  --color-warm-gray-light: #8b7b6f;
+  
+  /* Typography */
+  --font-serif: "Playfair Display", Georgia, serif;
+  --font-sans: "DM Sans", system-ui, sans-serif;
+}
+
+:root {
+  --background: #fdf6ec;
+  --foreground: #4a4035;
+}
+
+body {
+  background: var(--background);
+  color: var(--foreground);
+  font-family: var(--font-sans);
+}
+
+/* Subtle animations */
+@keyframes fade-in {
+  from {
+    opacity: 0;
+    transform: translateY(8px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes fade-in-up {
+  from {
+    opacity: 0;
+    transform: translateY(16px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in {
+  animation: fade-in 0.5s ease-out forwards;
+}
+
+.animate-fade-in-up {
+  animation: fade-in-up 0.6s ease-out forwards;
+}
+
+.animation-delay-100 {
+  animation-delay: 0.1s;
+}
+
+.animation-delay-200 {
+  animation-delay: 0.2s;
+}
+
+.animation-delay-300 {
+  animation-delay: 0.3s;
+}
+
+/* Gentle focus states */
+*:focus-visible {
+  outline: 2px solid var(--color-terracotta);
+  outline-offset: 2px;
+}
