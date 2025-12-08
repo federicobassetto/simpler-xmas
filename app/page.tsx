@@ -1,44 +1,23 @@
-import Link from "next/link";
+"use client";
+
+import { useRouter } from "next/navigation";
+import { useAudio, AudioControl } from "@/components/AudioProvider";
 
 export default function Home() {
+  const router = useRouter();
+  const { startAudio } = useAudio();
+
+  const handleBegin = () => {
+    // Start the ambient music on user interaction
+    startAudio();
+    router.push("/wish");
+  };
+
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
-      {/* Decorative branch SVG */}
-      <div className="absolute top-8 right-8 opacity-20 pointer-events-none">
-        <svg
-          width="120"
-          height="120"
-          viewBox="0 0 120 120"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="text-forest"
-        >
-          <path
-            d="M60 10 L60 110 M40 30 L60 50 L80 30 M35 50 L60 75 L85 50 M30 70 L60 100 L90 70"
-            stroke="currentColor"
-            strokeWidth="2"
-            strokeLinecap="round"
-            strokeLinejoin="round"
-          />
-        </svg>
-      </div>
+      <AudioControl />
 
-      <div className="absolute bottom-8 left-8 opacity-15 pointer-events-none">
-        <svg
-          width="80"
-          height="80"
-          viewBox="0 0 80 80"
-          fill="none"
-          xmlns="http://www.w3.org/2000/svg"
-          className="text-terracotta"
-        >
-          <circle cx="40" cy="40" r="35" stroke="currentColor" strokeWidth="1.5" />
-          <circle cx="40" cy="40" r="25" stroke="currentColor" strokeWidth="1" />
-          <circle cx="40" cy="40" r="15" stroke="currentColor" strokeWidth="0.5" />
-        </svg>
-      </div>
-
-      <div className="max-w-2xl mx-auto text-center animate-fade-in-up">
+      <div className="max-w-2xl mx-auto text-center animate-fade-in-up border border-terracotta/40 p-12 bg-cream rounded-sm shadow-sm">
         {/* Main heading */}
         <h1 className="font-serif text-5xl md:text-6xl lg:text-7xl text-forest-dark mb-6 leading-tight">
           A Simpler Xmas
@@ -46,17 +25,17 @@ export default function Home() {
 
         {/* Subtitle */}
         <p className="text-lg md:text-xl text-warm-gray mb-4 leading-relaxed max-w-lg mx-auto">
-          Two weeks of small, kind moments for a calmer Christmas.
+          25 days of small, kind moments for a calmer Christmas.
         </p>
 
         <p className="text-base text-warm-gray-light mb-12 max-w-md mx-auto">
-          Create your personalised advent-style plan for a more mindful, 
+          Create your personalised advent-style calendar for a more mindful, 
           less stressful holiday season.
         </p>
 
         {/* CTA Button */}
-        <Link
-          href="/wish"
+        <button
+          onClick={handleBegin}
           className="
             inline-flex items-center justify-center
             px-10 py-4
@@ -70,7 +49,7 @@ export default function Home() {
           "
         >
           Begin
-        </Link>
+        </button>
 
         {/* Small note */}
         <p className="mt-8 text-sm text-warm-gray-light">

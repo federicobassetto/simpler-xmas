@@ -1,23 +1,44 @@
 # A Simpler Xmas 🎄
 
-A mindful advent-style planning app that helps you design a calmer, more intentional holiday season. Using AI, it creates a personalised 14-day plan based on your wishes and preferences.
+A mindful advent-style planning app that helps you design a calmer, more intentional holiday season. Using AI, it creates a personalised 25-day advent plan (December 1-25) based on your wishes and preferences.
 
 ## ✨ Features
 
-- **Personalised Planning**: Share your Christmas wish and answer 5 thoughtful questions to receive a tailored 14-day plan
+- **Personalised Planning**: Share your Christmas wish and answer 5 thoughtful questions to receive a tailored 25-day advent plan
 - **AI-Powered**: Uses OpenAI's Agents SDK to generate adaptive questions and meaningful daily activities
 - **Mindful Design**: Focus on low-stress, low-consumerism activities like journaling, nature walks, simple recipes, and connection
 - **Beautiful UI**: Warm, minimal design with gentle animations and a calming colour palette
-- **Advent Calendar View**: Interactive 14-day calendar with detailed activity descriptions and inspirational quotes
+- **Advent Calendar View**: Interactive 25-day advent calendar (Dec 1-25) with detailed activity descriptions and inspirational quotes
 
 ## 🛠 Tech Stack
 
-- **Next.js 15** with App Router
-- **TypeScript**
-- **Tailwind CSS** with custom theme
-- **Drizzle ORM** with SQLite
-- **OpenAI Agents SDK** for AI-powered question generation and plan creation
-- **ZenQuotes.io** for inspirational quotes
+### Core Framework
+
+- **[Next.js 16](https://nextjs.org/)** with App Router
+- **[React 19](https://react.dev/)**
+- **[TypeScript 5](https://www.typescriptlang.org/)**
+
+### Styling
+
+- **[Tailwind CSS 4](https://tailwindcss.com/)** with custom theme
+- **Google Fonts** — Playfair Display (serif) & DM Sans (sans-serif)
+
+### Database
+
+- **[Drizzle ORM](https://orm.drizzle.team/)** — type-safe SQL ORM
+- **[Turso](https://turso.tech/)** (LibSQL) — production edge database
+- **SQLite** — local development
+
+### AI & Validation
+
+- **[OpenAI Agents SDK](https://github.com/openai/openai-agents-js)** — agentic framework for adaptive question generation and plan creation (GPT-5.1)
+- **[Zod 4](https://zod.dev/)** — schema validation for AI structured outputs
+
+### Utilities
+
+- **[nanoid](https://github.com/ai/nanoid)** — unique ID generation
+- **[EmailJS](https://www.emailjs.com/)** — client-side email capture
+- **[ZenQuotes.io](https://zenquotes.io/)** — inspirational quotes API
 
 ## 🚀 Getting Started
 
@@ -32,7 +53,6 @@ A mindful advent-style planning app that helps you design a calmer, more intenti
 
 ```bash
 git clone <repository-url>
-cd qzo
 ```
 
 2. **Install dependencies**
@@ -112,7 +132,7 @@ npm run lint     # Run ESLint
 1. **Landing Page**: User is welcomed and clicks "Begin"
 2. **Wish Page**: User shares what they want from this holiday season
 3. **Questions Flow**: AI generates 5 adaptive follow-up questions based on the user's wish and previous answers
-4. **Plan Generation**: AI creates a 14-day advent-style plan with daily activities, drawing inspiration from wellness quotes
+4. **Plan Generation**: AI creates a 25-day advent plan (December 1-25) with daily activities, drawing inspiration from wellness quotes
 5. **Plan View**: User can browse their personalised calendar and optionally save their email for future features
 
 ## 🔮 Future Features

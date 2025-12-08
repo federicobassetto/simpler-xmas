@@ -20,14 +20,19 @@
 }
 
 :root {
-  --background: #fdf6ec;
+  --background: #c67d5e;
   --foreground: #4a4035;
 }
 
 body {
-  background: var(--background);
+  background-color: var(--background);
   color: var(--foreground);
   font-family: var(--font-sans);
+  
+  /* Delicate Christmas wallpaper texture - warm white on terracotta */
+  background-image: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='120' height='120' viewBox='0 0 120 120'%3E%3Cg fill='none' stroke='%23fdf6ec' stroke-width='0.5' opacity='0.25'%3E%3C!-- Snowflake 1 --%3E%3Cpath d='M20 10 L20 30 M10 20 L30 20 M13 13 L27 27 M27 13 L13 27'/%3E%3Ccircle cx='20' cy='20' r='3'/%3E%3C!-- Small star --%3E%3Cpath d='M80 15 L82 21 L88 21 L83 25 L85 31 L80 27 L75 31 L77 25 L72 21 L78 21 Z'/%3E%3C!-- Pine branch --%3E%3Cpath d='M50 50 L50 70 M45 55 L50 60 M55 55 L50 60 M43 62 L50 68 M57 62 L50 68'/%3E%3C!-- Tiny ornament --%3E%3Ccircle cx='100' cy='55' r='5'/%3E%3Cpath d='M100 50 L100 48 M98 48 L102 48'/%3E%3C!-- Small snowflake --%3E%3Cpath d='M25 85 L25 95 M20 90 L30 90 M22 87 L28 93 M28 87 L22 93'/%3E%3C!-- Holly berries cluster --%3E%3Ccircle cx='75' cy='90' r='2.5'/%3E%3Ccircle cx='80' cy='88' r='2.5'/%3E%3Ccircle cx='78' cy='94' r='2.5'/%3E%3C!-- Mini star --%3E%3Cpath d='M105 100 L106 103 L109 103 L107 105 L108 108 L105 106 L102 108 L103 105 L101 103 L104 103 Z'/%3E%3C/g%3E%3Cg fill='none' stroke='%23f5ebe0' stroke-width='0.5' opacity='0.2'%3E%3C!-- Small pine tree --%3E%3Cpath d='M95 10 L90 20 L93 20 L87 30 L91 30 L85 40 L105 40 L99 30 L103 30 L97 20 L100 20 Z'/%3E%3C!-- Candy cane hint --%3E%3Cpath d='M10 55 Q10 45 20 45 Q30 45 30 55' stroke-linecap='round'/%3E%3C!-- Small wreath --%3E%3Ccircle cx='55' cy='95' r='8'/%3E%3Ccircle cx='55' cy='95' r='5'/%3E%3C!-- Tiny gift box --%3E%3Crect x='38' cy='15' width='12' height='10' rx='1'/%3E%3Cpath d='M44 15 L44 25 M38 19 L50 19'/%3E%3C/g%3E%3C/svg%3E");
+  background-repeat: repeat;
+  background-size: 120px 120px;
 }
 
 /* Subtle animations */

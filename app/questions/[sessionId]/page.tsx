@@ -5,6 +5,7 @@ import { useRouter, useParams } from "next/navigation";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
 import { ProgressBar } from "@/components/ui/ProgressBar";
 import { Spinner } from "@/components/ui/Spinner";
+import { AudioControl } from "@/components/AudioProvider";
 
 interface Question {
   id: string;
@@ -23,6 +24,7 @@ export default function QuestionsPage() {
   const [answer, setAnswer] = useState<string | string[]>("");
   const [isLoading, setIsLoading] = useState(true);
   const [isSubmitting, setIsSubmitting] = useState(false);
+  const [isGeneratingPlan, setIsGeneratingPlan] = useState(false);
   const [error, setError] = useState("");
 
   const fetchNextQuestion = useCallback(async () => {
@@ -76,6 +78,12 @@ export default function QuestionsPage() {
     setIsSubmitting(true);
     setError("");
 
+    // If this is the 5th question, show the generating plan view
+    const isFinalQuestion = question.index === 5;
+    if (isFinalQuestion) {
+      setIsGeneratingPlan(true);
+    }
+
     try {
       const response = await fetch("/api/questions/answer", {
         method: "POST",
@@ -102,6 +110,7 @@ export default function QuestionsPage() {
       }
     } catch (err) {
       setError(err instanceof Error ? err.message : "Something went wrong");
+      setIsGeneratingPlan(false);
     } finally {
       setIsSubmitting(false);
     }
@@ -139,6 +148,62 @@ export default function QuestionsPage() {
     );
   }
 
+  if (isGeneratingPlan) {
+    return (
+      <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
+        <div className="w-full max-w-md mx-auto text-center animate-fade-in">
+          {/* Animated gift/calendar icon */}
+          <div className="mb-8 relative">
+            <div className="w-24 h-24 mx-auto relative">
+              {/* Spinning outer ring */}
+              <div className="absolute inset-0 rounded-full border-4 border-cream-dark border-t-terracotta animate-spin" />
+              {/* Center icon */}
+              <div className="absolute inset-0 flex items-center justify-center">
+                <svg
+                  className="w-10 h-10 text-forest-dark"
+                  fill="none"
+                  viewBox="0 0 24 24"
+                  stroke="currentColor"
+                >
+                  <path
+                    strokeLinecap="round"
+                    strokeLinejoin="round"
+                    strokeWidth={1.5}
+                    d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z"
+                  />
+                </svg>
+              </div>
+            </div>
+          </div>
+
+          {/* Main message */}
+          <h2 className="font-serif text-2xl md:text-3xl text-forest-dark mb-4">
+            Creating your personalized calendar
+          </h2>
+
+          {/* Time estimate */}
+          <p className="text-white mb-6 leading-relaxed">
+            We&apos;re crafting 25 unique activities just for you.
+            <br />
+            This usually takes <span className="font-semibold text-white">1–2 minutes</span>.
+          </p>
+
+          {/* Gentle reminder */}
+          <p className="text-white/80 text-sm mb-8">
+            Please don&apos;t leave this page while we work our magic ✨
+          </p>
+
+          {/* Animated dots */}
+          <div className="flex justify-center gap-1.5">
+            <span className="w-2 h-2 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: '0ms' }} />
+            <span className="w-2 h-2 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: '150ms' }} />
+            <span className="w-2 h-2 bg-terracotta rounded-full animate-bounce" style={{ animationDelay: '300ms' }} />
+          </div>
+        </div>
+      </main>
+    );
+  }
+
   if (!question) {
     return (
       <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
@@ -157,7 +222,8 @@ export default function QuestionsPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-xl mx-auto animate-fade-in">
+      <AudioControl />
+      <div className="w-full max-w-xl mx-auto animate-fade-in bg-cream border border-terracotta/40 rounded-sm shadow-sm p-8 md:p-12">
         {/* Progress bar */}
         <div className="mb-8">
           <ProgressBar current={question.index} total={5} />

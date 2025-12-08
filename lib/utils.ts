@@ -9,25 +9,26 @@ export function generateId(): string {
 }
 
 /**
- * Calculate the 14 days leading up to December 25th of the current year
- * If we're past December 25th, use next year's date
+ * Calculate 25 days from December 1st to December 25th of the current year
+ * If we're past December 25th, use next year's dates
  */
 export function getAdventDates(): Date[] {
   const now = new Date();
   const currentYear = now.getFullYear();
   
-  // December 25th of current year
-  let christmas = new Date(currentYear, 11, 25); // Month is 0-indexed
+  // December 1st of current year
+  let startDate = new Date(currentYear, 11, 1); // Month is 0-indexed
   
-  // If we're past Christmas, use next year
+  // If we're past December 25th, use next year
+  const christmas = new Date(currentYear, 11, 25);
   if (now > christmas) {
-    christmas = new Date(currentYear + 1, 11, 25);
+    startDate = new Date(currentYear + 1, 11, 1);
   }
   
   const dates: Date[] = [];
-  for (let i = 13; i >= 0; i--) {
-    const date = new Date(christmas);
-    date.setDate(date.getDate() - i);
+  for (let i = 0; i < 25; i++) {
+    const date = new Date(startDate);
+    date.setDate(date.getDate() + i);
     dates.push(date);
   }
   
@@ -61,6 +62,17 @@ export function isToday(date: Date): boolean {
 }
 
 /**
+ * Check if a date is in the past (before today)
+ */
+export function isPast(date: Date): boolean {
+  const today = new Date();
+  today.setHours(0, 0, 0, 0);
+  const compareDate = new Date(date);
+  compareDate.setHours(0, 0, 0, 0);
+  return compareDate < today;
+}
+
+/**
  * Simple email validation
  */
 export function isValidEmail(email: string): boolean {
@@ -78,5 +90,7 @@ export const categoryConfig: Record<string, { label: string; color: string }> = 
   "giving": { label: "Giving", color: "bg-forest-light text-white" },
   "nature": { label: "Nature", color: "bg-forest text-white" },
   "reflection": { label: "Reflection", color: "bg-terracotta text-white" },
+  "cooking": { label: "Cooking", color: "bg-amber-200 text-amber-900" },
+  "diy": { label: "DIY", color: "bg-rose-300 text-rose-900" },
 };
 

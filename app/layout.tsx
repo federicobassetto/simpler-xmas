@@ -1,6 +1,7 @@
 import type { Metadata } from "next";
 import { Playfair_Display, DM_Sans } from "next/font/google";
 import "./globals.css";
+import { AudioProvider } from "@/components/AudioProvider";
 
 const playfair = Playfair_Display({
   variable: "--font-serif",
@@ -16,7 +17,7 @@ const dmSans = DM_Sans({
 
 export const metadata: Metadata = {
   title: "A Simpler Xmas",
-  description: "Two weeks of small, kind moments for a calmer Christmas. Design your personalised advent-style plan for a more mindful holiday season.",
+  description: "25 days of small, kind moments for a calmer Christmas. Design your personalised advent plan (Dec 1-25) for a more mindful holiday season.",
 };
 
 export default function RootLayout({
@@ -29,7 +30,7 @@ export default function RootLayout({
       <body
         className={`${playfair.variable} ${dmSans.variable} antialiased bg-cream min-h-screen`}
       >
-        {children}
+        <AudioProvider>{children}</AudioProvider>
       </body>
     </html>
   );

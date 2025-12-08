@@ -4,6 +4,8 @@ import { sessions } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { isValidEmail } from "@/lib/utils";
 
+// This route now only saves the email to the session
+// Actual email sending is handled by EmailJS on the client side
 export async function POST(request: Request) {
   try {
     const body = await request.json();
@@ -44,9 +46,6 @@ export async function POST(request: Request) {
       })
       .where(eq(sessions.id, sessionId));
 
-    // TODO: In the future, integrate with an email service like Resend
-    // to send daily reminder emails with the advent activities
-
     return NextResponse.json({ success: true });
   } catch (error) {
     console.error("Error saving email:", error);
@@ -56,4 +55,3 @@ export async function POST(request: Request) {
     );
   }
 }
-

@@ -3,6 +3,7 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { PrimaryButton } from "@/components/ui/PrimaryButton";
+import { AudioControl } from "@/components/AudioProvider";
 
 const EXAMPLE_WISHES = [
   "Less rushing and more quiet dinners.",
@@ -50,7 +51,8 @@ export default function WishPage() {
 
   return (
     <main className="min-h-screen flex flex-col items-center justify-center px-4 py-16">
-      <div className="w-full max-w-xl mx-auto animate-fade-in-up">
+      <AudioControl />
+      <div className="w-full max-w-xl mx-auto animate-fade-in-up bg-cream border border-terracotta/40 rounded-sm shadow-sm p-8 md:p-12">
         {/* Heading */}
         <h1 className="font-serif text-3xl md:text-4xl text-forest-dark mb-3 text-center">
           For Christmas I would like to…
@@ -137,4 +139,3 @@ export default function WishPage() {
     </main>
   );
 }
-

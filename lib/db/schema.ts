@@ -29,11 +29,11 @@ export const answers = sqliteTable("answers", {
   createdAt: integer("created_at", { mode: "timestamp" }).notNull().$defaultFn(() => new Date()),
 });
 
-// DailyTask - the 14 days of the advent plan
+// DailyTask - the 25 days of the advent plan (December 1-25)
 export const dailyTasks = sqliteTable("daily_tasks", {
   id: text("id").primaryKey(),
   sessionId: text("session_id").notNull().references(() => sessions.id, { onDelete: "cascade" }),
-  dayIndex: integer("day_index").notNull(), // 1..14
+  dayIndex: integer("day_index").notNull(), // 1..25
   targetDate: integer("target_date", { mode: "timestamp" }).notNull(),
   title: text("title").notNull(),
   description: text("description").notNull(),

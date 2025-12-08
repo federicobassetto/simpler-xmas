@@ -4,13 +4,18 @@
   "private": true,
   "scripts": {
     "dev": "next dev",
-    "build": "next build",
+    "db:generate": "drizzle-kit generate",
+    "db:migrate": "drizzle-kit migrate",
+    "db:push": "drizzle-kit push",
+    "prebuild": "sh -c 'if [ \"$VERCEL_ENV\" = \"production\" ]; then npm run db:migrate; else echo Skipping migrations; fi'",
+    "build": "npm run prebuild && next build",
     "start": "next start",
     "lint": "eslint"
   },
   "dependencies": {
+    "@emailjs/browser": "^4.4.1",
+    "@libsql/client": "^0.15.15",
     "@openai/agents": "^0.3.4",
-    "better-sqlite3": "^12.5.0",
     "drizzle-orm": "^0.45.0",
     "nanoid": "^5.1.6",
     "next": "16.0.7",
@@ -20,7 +25,6 @@
   },
   "devDependencies": {
     "@tailwindcss/postcss": "^4",
-    "@types/better-sqlite3": "^7.6.13",
     "@types/node": "^20",
     "@types/react": "^19",
     "@types/react-dom": "^19",

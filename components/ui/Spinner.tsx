@@ -14,7 +14,7 @@ export function Spinner({ message }: SpinnerProps) {
         <div className="absolute inset-0 w-12 h-12 rounded-full border-2 border-transparent border-t-terracotta animate-spin" />
       </div>
       {message && (
-        <p className="text-warm-gray-light text-sm animate-pulse">{message}</p>
+        <p className="text-white text-sm animate-pulse">{message}</p>
       )}
     </div>
   );

@@ -2,7 +2,7 @@
 
 You are an expert full‑stack engineer. Create and maintain a **single Next.js application** that implements everything in this document.
 
-The goal is to build **“A Simpler Xmas”**, a small product that helps people design a calmer, more mindful Christmas using an AI‑generated, personalised two‑week advent‑style plan.
+The goal is to build **"A Simpler Xmas"**, a small product that helps people design a calmer, more mindful Christmas using an AI‑generated, personalised 25‑day advent plan (December 1–25).
 
 ## 1. Tech Stack and Project Setup
 
@@ -64,7 +64,7 @@ Implement a linear flow:
 
 1. **Landing page** (`/`)
    - Hero with title **“A Simpler Xmas”**.
-   - Short subtitle: e.g. “Two weeks of small, kind moments for a calmer Christmas.”
+   - Short subtitle: e.g. "25 days of small, kind moments for a calmer Christmas."
    - Single primary button **“Begin”** that navigates to the next step.
    - No nav bar or other sections for now.
 
@@ -104,10 +104,10 @@ Implement a linear flow:
    - Once all 5 are complete, the server triggers the plan generation (see section 5) and the client navigates to `/plan/[sessionId]`.
 
 4. **Plan page / advent‑style calendar** (`/plan/[sessionId]`)
-   - Represents a **two‑week plan** leading up to Christmas: 14 days of small activities aligned with the user’s wish and answers.
+   - Represents a **25‑day advent plan** (December 1–25): 25 days of small activities aligned with the user's wish and answers.
    - Layout:
      - Intro section summarising the user’s wish in one sentence (mirrored back via AI, but gently rephrased).
-     - Grid of 14 “day cards” (2 or 3 columns) styled like a minimalist advent calendar.
+     - Grid of 25 "day cards" (2 or 3 columns) styled like a minimalist advent calendar.
      - Each card shows:
        - Day label, e.g. “Day 1”, “Day 2”.
        - The calendar date relative to **this year’s upcoming 25 December**.
@@ -115,7 +115,7 @@ Implement a linear flow:
        - A short excerpt from the description.
        - A small tag such as “Self‑care”, “Connection”, “Decluttering”, “Nature”, “Giving”.
      - A right‑hand or below‑the‑fold panel for **“Today’s focus”**:
-       - Highlights the activity for today’s date (if within the 14‑day window).
+       - Highlights the activity for today's date (if within the 25‑day window).
        - Shows the full description, recommended time and estimated minutes.
        - Displays one inspirational quote (see external data section).
 
@@ -164,7 +164,7 @@ model DailyTask {
   id          String   @id @default(cuid())
   sessionId   String
   session     Session  @relation(fields: [sessionId], references: [id], onDelete: Cascade)
-  dayIndex    Int      // 1..14
+  dayIndex    Int      // 1..25
   targetDate  DateTime // concrete calendar date for that year's lead-up
   title       String
   description String
@@ -212,7 +212,7 @@ You are a warm, practical seasonal coach helping someone design a calmer, simple
 You will be called several times in the same session. Each time you respond you must produce exactly ONE follow‑up question plus metadata for how it should be answered.
 
 GENERAL GOAL
-- Help the user clarify what they truly need from this season so that another agent can later design a personalised two‑week plan.
+- Help the user clarify what they truly need from this season so that another agent can later design a personalised 25‑day advent plan.
 - Build on the user's initial wish and on everything they have already shared.
 - Aim for a maximum of five questions in total across the session. If you already have enough information, use remaining questions to gently prioritise or clarify.
 
@@ -284,7 +284,7 @@ Implement a helper `generateNextQuestion(session)` that:
 - Persists the returned question in the DB with the correct `index` and options JSON.
 - Returns the saved question to the API route.
 
-### 5.2 Plan Agent – two‑week advent‑style plan
+### 5.2 Plan Agent – 25‑day advent plan
 
 For the **plan agent**:
 
@@ -292,7 +292,7 @@ For the **plan agent**:
 
 ```ts
 const dailyTaskSchema = z.object({
-  dayIndex: z.number().int().min(1).max(14),
+  dayIndex: z.number().int().min(1).max(25),
   title: z.string(),
   description: z.string(),
   category: z.enum(['self-care','connection','decluttering','giving','nature','reflection']),
@@ -301,7 +301,7 @@ const dailyTaskSchema = z.object({
 
 const planOutput = z.object({
   summarySentence: z.string(),  // one-line reflection of the user's wish
-  days: z.array(dailyTaskSchema).length(14)
+  days: z.array(dailyTaskSchema).length(25)
 });
 ```
 
@@ -312,7 +312,7 @@ export const planAgent = new Agent({
   name: 'SimplerXmasPlanAgent',
   model: 'gpt-5.1',
   instructions: `
-You create a two‑week advent‑style plan that helps someone live a calmer, more mindful holiday season.
+You create a 25‑day advent plan (December 1–25) that helps someone live a calmer, more mindful holiday season.
 
 INPUT YOU RECEIVE
 - A short description of the user's initial wish for this season.
@@ -322,11 +322,11 @@ INPUT YOU RECEIVE
 OUTPUT SCHEMA
 You must follow the provided structured output type:
 - summarySentence: one warm sentence that reflects back what this person is really hoping for.
-- days: exactly 14 daily activities with fields such as dayIndex, title, description, category, and tags.
-The system will handle dates separately; assume dayIndex 1 is the first day of the two‑week period.
+- days: exactly 25 daily activities with fields such as dayIndex, title, description, category, and tags.
+The system will handle dates separately; assume dayIndex 1 is December 1st.
 
 OVERALL GOAL
-- Design 14 gentle, practical actions that move the user closer to their wish without overwhelming them.
+- Design 25 gentle, practical actions that move the user closer to their wish without overwhelming them.
 - The plan should feel like a soft companion: realistic for low energy, low budget, and imperfect circumstances.
 
 TONE & VOICE
@@ -339,7 +339,7 @@ TONE & VOICE
 DESIGN PRINCIPLES
 - Favour small, doable steps over big projects. Many tasks should comfortably fit within 10–30 minutes; some can be even shorter.
 - Assume limited budget. Most activities should be free or very low‑cost.
-- Mix categories across the 14 days so the plan feels varied and balanced:
+- Mix categories across the 25 days so the plan feels varied and balanced:
   - self-care (rest, soothing, mindful breaks)
   - connection (small, authentic moments with others or with community)
   - decluttering (physical or digital, light and focused)
@@ -355,7 +355,7 @@ WORKING WITH USER CONSTRAINTS
 - If they mention hosting, caregiving, parenting, travel, or work shifts, design tasks that fit realistically around those responsibilities.
 - If they dislike a certain type of activity (e.g. cooking, social gatherings), avoid centering the plan on that.
 
-STRUCTURE OF THE 14 DAYS
+STRUCTURE OF THE 25 DAYS
 - Let the plan have a light arc:
   - Early days: reflection, noticing needs, small decluttering or preparation steps.
   - Middle days: connection, creativity, and nature‑based activities.
@@ -379,9 +379,9 @@ SAFETY & BOUNDARIES
 CATEGORIES & TAGS
 - Ensure the "category" for each day matches the content of the description.
 - Use tags to highlight key themes (e.g. ["quiet-evening", "journaling"], ["nature", "movement"], ["connection", "low-pressure"]).
-- Across 14 days, include every main category at least twice, unless the user's answers clearly reject a category.
+- Across 25 days, include every main category at least three times, unless the user's answers clearly reject a category.
 
-Your goal is to deliver a plan that feels like a kind, realistic companion for the next two weeks, helping this person move a little closer to the holiday season they actually want.
+Your goal is to deliver a plan that feels like a kind, realistic companion for the 25 days leading up to Christmas, helping this person move a little closer to the holiday season they actually want.
   `,
   outputType: planOutput,
 });
@@ -391,7 +391,7 @@ Your goal is to deliver a plan that feels like a kind, realistic companion for t
 Implement `generatePlan(sessionId)` that:
 
 1. Fetches the `Session` with its questions and answers from the database.
-2. Fetches **14 inspirational quotes** from the external data source (see section 6) and keeps them in memory.
+2. Fetches **25 inspirational quotes** from the external data source (see section 6) and keeps them in memory.
 3. Constructs a compact input for the agent including:
 
    - The initial wish.
@@ -400,7 +400,7 @@ Implement `generatePlan(sessionId)` that:
 4. Calls `run(planAgent, inputStringOrJSON)`.
 5. Persists each day into `DailyTask` rows:
 
-   - Compute the **target date** for each `dayIndex` as the 14 days leading up to the next upcoming December 25.
+   - Compute the **target date** for each `dayIndex` as December 1–25 of the current (or next) year.
    - Attach one of the fetched quotes to each task.
 6. Return the saved tasks (plus `summarySentence`) via the API.
 
@@ -410,7 +410,7 @@ Use **ZenQuotes.io** as the external data source for inspirational quotes.
 
 Implementation:
 
-- Add a server‑side helper in `lib/quotes.ts` that fetches quotes using `fetch` from `https://zenquotes.io/api/random?count=14` (or similar).
+- Add a server‑side helper in `lib/quotes.ts` that fetches quotes using `fetch` from `https://zenquotes.io/api/random?count=25` (or similar).
 - Parse the JSON into `{ quote: string; author: string }[]`.
 - Use this helper inside `generatePlan`.
 - For each `DailyTask`, store one quote and author.
@@ -540,7 +540,7 @@ All handlers must be server‑side (no `edge` runtime required).
   - Subheading with the `summarySentence`.
   - Two‑column layout on desktop:
 
-    - Left: grid of 14 day cards.
+    - Left: grid of 25 day cards.
     - Right: “Today’s focus” panel.
 
 - Day cards:
