@@ -1,10 +1,29 @@
-import { Agent, run } from "@openai/agents";
+import { Agent, Runner } from "@openai/agents";
 import { z } from "zod";
 import { db } from "@/lib/db";
 import { sessions, questions, answers, dailyTasks } from "@/lib/db/schema";
 import { eq } from "drizzle-orm";
 import { generateId, getAdventDates } from "@/lib/utils";
 import { fetchQuotes } from "@/lib/quotes";
+
+// =====================================
+// Runners with Metadata for Dashboard Filtering
+// =====================================
+const questionRunner = new Runner({
+  workflowName: "SimplerXmas-Questions",
+  traceMetadata: {
+    agent: "question-agent",
+    app: "simpler-xmas",
+  },
+});
+
+const planRunner = new Runner({
+  workflowName: "SimplerXmas-Plan",
+  traceMetadata: {
+    agent: "plan-agent",
+    app: "simpler-xmas",
+  },
+});
 
 // =====================================
 // Question Output Schema
@@ -213,7 +232,11 @@ export async function generateNextQuestion(sessionId: string) {
   });
 
   // Fetch answers for existing questions and find the first unanswered one
-  const questionAnswers: { question: string; answer: string }[] = [];
+  const questionAnswers: {
+    question: string;
+    options: string[] | null;
+    answer: string;
+  }[] = [];
   let firstUnansweredQuestion: (typeof existingQuestions)[0] | null = null;
 
   for (const q of existingQuestions) {
@@ -225,8 +248,10 @@ export async function generateNextQuestion(sessionId: string) {
       const answerText = Array.isArray(parsedValue)
         ? parsedValue.join(", ")
         : parsedValue;
+      const options = q.optionsJson ? JSON.parse(q.optionsJson) : null;
       questionAnswers.push({
         question: q.text,
+        options,
         answer: answerText,
       });
     } else if (!firstUnansweredQuestion) {
@@ -270,6 +295,9 @@ export async function generateNextQuestion(sessionId: string) {
     promptParts.push("", "Previous questions and answers:");
     for (const qa of questionAnswers) {
       promptParts.push(`Q: ${qa.question}`);
+      if (qa.options && qa.options.length > 0) {
+        promptParts.push(`Options: ${qa.options.join(", ")}`);
+      }
       promptParts.push(`A: ${qa.answer}`);
       promptParts.push("");
     }
@@ -279,8 +307,8 @@ export async function generateNextQuestion(sessionId: string) {
 
   const prompt = promptParts.join("\n");
 
-  // Run the agent
-  const result = await run(questionAgent, prompt);
+  // Run the agent with metadata-enabled runner
+  const result = await questionRunner.run(questionAgent, prompt);
 
   if (!result.finalOutput) {
     throw new Error("Agent did not return a valid response");
@@ -342,7 +370,11 @@ export async function generatePlan(sessionId: string) {
     where: eq(questions.sessionId, sessionId),
   });
 
-  const qaList: { question: string; answer: string }[] = [];
+  const qaList: {
+    question: string;
+    options: string[] | null;
+    answer: string;
+  }[] = [];
   for (const q of sessionQuestions) {
     const answer = await db.query.answers.findFirst({
       where: eq(answers.questionId, q.id),
@@ -352,8 +384,10 @@ export async function generatePlan(sessionId: string) {
       const answerText = Array.isArray(parsedValue)
         ? parsedValue.join(", ")
         : parsedValue;
+      const options = q.optionsJson ? JSON.parse(q.optionsJson) : null;
       qaList.push({
         question: q.text,
+        options,
         answer: answerText,
       });
     }
@@ -371,6 +405,9 @@ export async function generatePlan(sessionId: string) {
 
   for (const qa of qaList) {
     promptParts.push(`Q: ${qa.question}`);
+    if (qa.options && qa.options.length > 0) {
+      promptParts.push(`Options: ${qa.options.join(", ")}`);
+    }
     promptParts.push(`A: ${qa.answer}`);
     promptParts.push("");
   }
@@ -388,8 +425,8 @@ export async function generatePlan(sessionId: string) {
 
   const prompt = promptParts.join("\n");
 
-  // Run the plan agent
-  const result = await run(planAgent, prompt);
+  // Run the plan agent with metadata-enabled runner
+  const result = await planRunner.run(planAgent, prompt);
 
   if (!result.finalOutput) {
     throw new Error("Plan agent did not return a valid response");
