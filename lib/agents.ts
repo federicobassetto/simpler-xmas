@@ -93,6 +93,13 @@ const dailyTaskSchema = z.object({
     "diy",
   ]),
   tags: z.array(z.string()).nullable(),
+  quoteIndex: z
+    .number()
+    .int()
+    .min(0)
+    .describe(
+      "The index of the quote from the provided list that best fits this day's activity and mood"
+    ),
 });
 
 const planOutputSchema = z.object({
@@ -162,12 +169,13 @@ STRUCTURE OF THE 25 DAYS
 - Each day should have ONE primary activity. It may optionally suggest a very tiny "if this is all you can manage" alternative in the same description.
 - Repetition is okay in spirit (e.g. several quiet walks), but vary the details and focus so each day feels intentional, not copy‑pasted.
 
-USING QUOTES AS AN EXTERNAL DATA SOURCE
-- You are given a list of inspirational quotes with authors.
-- Use the themes, moods, and ideas from these quotes as subtle inspiration for the activities.
-- Do NOT reproduce any quote verbatim.
-- Do NOT reference the quote API or say that your ideas come from quotes.
-- The system will store one quote alongside each activity separately; you do not need to mention quotes directly in the text.
+SELECTING QUOTES FOR EACH DAY
+- You are given a numbered list of inspirational quotes (index: "quote" — author).
+- For each of the 25 days, you MUST select the quote that best matches the activity's theme, mood, or message by providing its index in the "quoteIndex" field.
+- Consider the emotional tone, keywords, and underlying message when matching quotes to activities.
+- Each quote can only be used once. Do NOT repeat quote indices across days.
+- Do NOT reproduce any quote verbatim in the activity description.
+- Do NOT reference quotes or the quote list in the activity text itself.
 
 SAFETY & BOUNDARIES
 - Do not give medical, financial, or legal advice.
@@ -367,14 +375,15 @@ export async function generatePlan(sessionId: string) {
     promptParts.push("");
   }
 
-  promptParts.push("", "Inspirational quotes for thematic inspiration:");
-  for (const quote of quotes) {
-    promptParts.push(`- "${quote.quote}" — ${quote.author}`);
+  promptParts.push("", "Available quotes (select the best-fitting one for each day by its index):");
+  for (let i = 0; i < quotes.length; i++) {
+    promptParts.push(`${i}: "${quotes[i].quote}" — ${quotes[i].author}`);
   }
 
   promptParts.push(
     "",
-    "Create a 25-day advent plan (December 1-25) based on the user's wish and answers."
+    "Create a 25-day advent plan (December 1-25) based on the user's wish and answers.",
+    "For each day, select the quote index that best matches the activity's theme and mood."
   );
 
   const prompt = promptParts.join("\n");
@@ -400,11 +409,15 @@ export async function generatePlan(sessionId: string) {
     })
     .where(eq(sessions.id, sessionId));
 
-  // Save each daily task
+  // Save each daily task with LLM-selected quotes
   const savedTasks = [];
-  for (let i = 0; i < output.days.length; i++) {
-    const day = output.days[i];
-    const quote = quotes[i];
+  for (const day of output.days) {
+    // Use the LLM-selected quote index, with fallback to day index if out of bounds
+    const quoteIndex =
+      day.quoteIndex >= 0 && day.quoteIndex < quotes.length
+        ? day.quoteIndex
+        : day.dayIndex - 1;
+    const quote = quotes[quoteIndex];
 
     const task = {
       id: generateId(),
